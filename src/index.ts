@@ -3,16 +3,21 @@ import express, { type Request, type Response } from "express"
 import cors from "cors"
 import nodemailer from "nodemailer"
 import axios from "axios"
+import cron from "node-cron"
 
 const app = express()
 
-const PORT = process.env.PORT ?? 8080;
+const PORT = process.env.PORT ?? 8080
 
-app.use(cors({
-    origin: "http://localhost:5173"
-}))
+app.use(
+  cors({
+    origin: ["http://localhost:5173",
+    "https://9rnxrpg7-8080.inc1.devtunnels.ms"]
+  })
+)
+
 app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -22,6 +27,15 @@ const transporter = nodemailer.createTransport({
   },
 })
 
+// Health check
+app.get("/health", (_req: Request, res: Response) => {
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+  })
+})
+
+// Contact
 app.post("/api/contact", async (req: Request, res: Response) => {
   try {
     const { name, email, message } = req.body
@@ -49,17 +63,33 @@ ${message}
     res.status(200).json({
       message: "Message sent successfully.",
     })
-  } catch (error: any) {
-    if(axios.isAxiosError(error)){
-        console.error(error.response?.data?.message)
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(error.response?.data?.message)
     }
-    if(error instanceof Error) {
-        console.error(error.message)
+
+    if (error instanceof Error) {
+      console.error(error.message)
     }
-    console.error(error);
+
     res.status(500).json({
       message: "Failed to send message.",
     })
+  }
+})
+
+// Every 12 minutes
+cron.schedule("*/12 * * * *", async () => {
+  try {
+    const healthUrl = `http://localhost:${PORT}/health`
+
+    const response = await axios.get(healthUrl)
+
+    console.log(
+      `[CRON] Health check: ${response.status} - ${new Date().toISOString()}`
+    )
+  } catch (error) {
+    console.error("[CRON] Health check failed:", error)
   }
 })
 
