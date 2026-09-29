@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "npx tsx ./src/index.ts",
     "dev": "npx tsx --watch ./src/index.ts"
   },
   "keywords": [],
