@@ -4,8 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "npm install && npm run build",
-    "start": "npx tsx ./src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "dev": "npx tsx --watch ./src/index.ts"
   },
   "keywords": [],
@@ -24,6 +24,8 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node-cron": "^3.0.11"
+    "@types/node-cron": "^3.0.11",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }
