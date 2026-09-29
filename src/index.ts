@@ -12,7 +12,8 @@ const PORT = process.env.PORT ?? 8080
 app.use(
   cors({
     origin: ["http://localhost:5173",
-  "https://abhisankhwar.vercel.app"]
+  "https://abhisankhwar.vercel.app",
+"https://9rnxrpg7-5173.inc1.devtunnels.ms"]
   })
 )
 
