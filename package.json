@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "npm install && npm run build",
     "start": "npx tsx ./src/index.ts",
     "dev": "npx tsx --watch ./src/index.ts"
   },
